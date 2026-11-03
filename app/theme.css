@@ -1,0 +1,113 @@
+/* Studio Galaxy theme: colour, type, motion and base styles, exactly as on studiogalaxy.org.
+   Needs Tailwind CSS v4. In app/globals.css:  @import "tailwindcss";  @import "./theme.css";
+   Don't edit values here. If the brand changes, it changes on the main site first. */
+
+@theme {
+  --color-cream: #f7f0e7;
+  --color-cream-2: #efe6da;
+  --color-paper: #fbf7f1;
+  --color-ink: #242220;
+  --color-ink-2: #6f6961;
+  --color-ink-3: #a39b91;
+  --color-line: rgb(36 34 32 / 0.12);
+  --color-lavender: #d8c9ff;
+  --color-lilac: #ebe3ff;
+  --color-violet: #7447ff;
+  --color-deep: #1b1428;
+  --color-space: #0c0b10;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    scroll-behavior: smooth;
+    overflow-x: clip;
+    scrollbar-width: none; /* page still scrolls; the bar is just hidden */
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--color-cream);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    overflow-x: clip;
+  }
+  html::-webkit-scrollbar {
+    display: none;
+  }
+  ::selection {
+    background: var(--color-lavender);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-violet);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+@utility display {
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.92;
+  text-wrap: balance;
+}
+
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Animated underline for text links */
+@utility link-line {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--ease-out-expo);
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 1px;
+    background-position: 0% 100%;
+  }
+}
+
+/* Hero entrance runs in CSS so it doesn't wait for hydration */
+@keyframes rise {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sweep {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.18); opacity: 1; }
+}
+.anim-rise { animation: rise 1.1s var(--ease-out-expo) both; }
+.anim-fade { animation: fade 1.2s ease both; }
+.anim-sweep { animation: sweep 1.2s var(--ease-out-expo) both; transform-origin: left; }
+.anim-breathe { animation: breathe 4.5s ease-in-out infinite; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
