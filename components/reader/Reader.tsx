@@ -34,6 +34,15 @@ export type ReaderBook = {
 // pdf.js legacy worker, to match the legacy library aliased in next.config.ts (older phones and Safari).
 if (typeof window !== "undefined") {
   configurePdf({ workerSrc: new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString() });
+
+  // Phones and tablets: draw pages and the curl at no more than 2× pixel density. A 3× screen (Galaxy S24,
+  // iPhone Pro) otherwise shades and renders 2.25× the pixels every frame, and at arm's length 2× looks the same.
+  // Desktop is untouched.
+  // ponytail: patches window.devicePixelRatio, the only knob the SDK reads; move to an SDK option (maxPixelRatio) when it has one.
+  const dpr = Object.getOwnPropertyDescriptor(window, "devicePixelRatio") ?? Object.getOwnPropertyDescriptor(Window.prototype, "devicePixelRatio");
+  if (window.matchMedia("(pointer: coarse)").matches && dpr?.get) {
+    Object.defineProperty(window, "devicePixelRatio", { configurable: true, get: () => Math.min(2, dpr.get!.call(window)) });
+  }
 }
 
 // The reader's accent: pink on cream, for every book.

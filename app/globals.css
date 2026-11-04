@@ -92,6 +92,12 @@
 [data-theme="light"] .reader-btn[aria-pressed="true"] { background: #f7f0e7; box-shadow: inset 0 0 0 1px rgb(84 60 40 / 0.07); }
 
 
+/* Phones and tablets: no frosted glass. The bars sit over the book, so a blur behind them is redrawn on every
+   frame of a page turn; the panels are nearly opaque anyway, so they look the same without it. */
+@media (pointer: coarse) {
+  .reader-panel { -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
 /* Behind the reader, the page takes the reader's own background, so no cream hairline shows at the window's edges. */
 html:has([data-theme="light"]),
 html:has([data-theme="light"]) body { background: #ebe1d3; overscroll-behavior: none; }
