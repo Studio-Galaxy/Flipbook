@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: { default: "Flipbook — a library for young readers", template: "%s · Flipbook" },
   description:
     "Pick a subject, choose a class, turn real pages. A demo learning library by Studio Galaxy, made with our Flipbook SDK.",
+  appleWebApp: { capable: true, title: "Flipbook", statusBarStyle: "default" }, // installed on iPhone: opens full screen, named Flipbook
 };
 
 export const viewport: Viewport = { themeColor: "#f7f0e7" };
