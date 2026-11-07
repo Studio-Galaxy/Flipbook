@@ -31,9 +31,13 @@ export type ReaderBook = {
   next?: { label: string; href: string };
 };
 
-// pdf.js legacy worker, to match the legacy library aliased in next.config.ts (older phones and Safari).
+// pdf.js legacy workers, to match the legacy library aliased in next.config.ts (older phones and Safari).
+// The renderer worker draws pages off the main thread, so turns don't stutter while neighbours render.
 if (typeof window !== "undefined") {
-  configurePdf({ workerSrc: new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString() });
+  configurePdf({
+    workerSrc: new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString(),
+    rendererSrc: new URL("pdfjs-dist/legacy/build/pdf.renderer.min.mjs", import.meta.url).toString(),
+  });
 
   // Phones and tablets: draw pages and the curl at no more than 2× pixel density. A 3× screen (Galaxy S24,
   // iPhone Pro) otherwise shades and renders 2.25× the pixels every frame, and at arm's length 2× looks the same.
@@ -54,7 +58,7 @@ const LIGHT = {
   placeholderDotColor: argb(0x1f242220),
   curlShadowColor: argb(0x2e1b1428),
   spineShadowColor: argb(0x22000000),
-  pageTurnDuration: 420,
+  pageTurnDuration: 300, // button and key turns; swipes follow the finger
 };
 const DARK = { ...LIGHT, placeholderColor: argb(0xff2a2a2a), placeholderDotColor: argb(0x26ffffff), curlShadowColor: argb(0x40000000), spineShadowColor: argb(0x30000000) };
 
@@ -187,7 +191,8 @@ export function Reader({ book }: { book: ReaderBook }) {
   // Keys: the SDK handles none itself.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey || (e.target as HTMLElement).closest("input, textarea")) return;
+      // the target isn't always an element (a key event sent to window or document): only skip typing in fields
+      if (e.metaKey || e.ctrlKey || e.altKey || (e.target instanceof Element && e.target.closest("input, textarea"))) return;
       const actions: Record<string, () => void> = {
         ArrowRight: controller.nextPage,
         PageDown: controller.nextPage,
@@ -402,7 +407,10 @@ export function Reader({ book }: { book: ReaderBook }) {
                   theme={dark ? DARK : LIGHT}
                   pageTurnSound={sound}
                   onTap={() => setChrome((v) => !v)}
-                  onPageChanged={(p) => write(pageKey, String(p))}
+                  onPageChanged={(p) => {
+                    write(pageKey, String(p));
+                    setJumping(false); // an open "go to page" box would keep showing the old number
+                  }}
                   onDownloadProgress={setProgress}
                 />
               </motion.div>

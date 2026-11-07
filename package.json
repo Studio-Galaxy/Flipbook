@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@studio-galaxy/sg-flipbook": "github:Studio-Galaxy/Flipbook-Web-SDK#v1.0.1",
+    "@studio-galaxy/sg-flipbook": "github:Studio-Galaxy/Flipbook-Web-SDK#v1.1.0",
     "aws4fetch": "^1.0.20",
     "motion": "^13.4.4",
     "next": "16.3.6",
